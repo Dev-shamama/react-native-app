@@ -3,16 +3,16 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import {useAuth} from '../context/context';
 
 const Profile = ({navigation}: {navigation: any}) => {
   const auth: any = useAuth();
   const image =
-    'https://media.istockphoto.com/id/1249654571/photo/futuristic-digital-blockchain-background-abstract-connections-technology-and-digital-network.webp?b=1&s=170667a&w=0&k=20&c=y7IiOxIFOlFp-BM6KD6UCVEJou8ND9Y828NWh1YQxIM=';
+    'https://res.cloudinary.com/dejdypxzw/image/upload/v1702817949/reactnativeapp/sicpu18aowxwhqegc6ch.jpg';
 
   useEffect(() => {
     if (auth.auth === false) {
@@ -22,8 +22,10 @@ const Profile = ({navigation}: {navigation: any}) => {
 
   const logoutHandler = () => {
     auth.setAuth(false);
+    Alert.alert('Success', 'Logout Successfully', [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ]);
   };
-
 
   const saveDataOnCloud = () => {
     auth.saveData();
@@ -33,49 +35,57 @@ const Profile = ({navigation}: {navigation: any}) => {
     auth.dataSync();
   };
 
+  useEffect(() => {
+    auth.profile();
+  }, []);
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image style={styles.coverPhoto} source={{uri: image}} />
         <View style={styles.profileContainer}>
           <Image
             style={styles.profilePhoto}
             source={{
-              uri: 'https://www.bootdey.com/img/Content/avatar/avatar1.png',
+              uri: 'https://res.cloudinary.com/dejdypxzw/image/upload/v1702817950/reactnativeapp/wuftyq5ozsk0bhk2mlod.jpg',
             }}
           />
           <Text style={styles.nameText}>SHAMAMA BIN SHAKIL</Text>
         </View>
+      </View> 
+      <View style={styles.functionBtn}>
+        <View style={styles.bioContainer}>
+          <Text style={styles.bioText}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et
+            ullamcorper nisi.
+          </Text>
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={saveDataOnCloud}>
+          <Text style={styles.buttonText}>Save data on cloud</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={dataFetchOnCloud}>
+          <Text style={styles.buttonText}>Data Fetch on Cloud</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={logoutHandler}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.bioContainer}>
-        <Text style={styles.bioText}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et
-          ullamcorper nisi.
-        </Text>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={saveDataOnCloud}>
-        <Text style={styles.buttonText}>Save data on cloud</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={dataFetchOnCloud}>
-        <Text style={styles.buttonText}>Data Fetch on Cloud</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={logoutHandler}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
     backgroundColor: '#fff',
   },
   headerContainer: {
     alignItems: 'center',
+    width: '100%',
   },
   coverPhoto: {
     width: '100%',
@@ -86,9 +96,12 @@ const styles = StyleSheet.create({
     marginTop: -50,
   },
   profilePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 100,
+  },
+  functionBtn: {
+    width: '80%',
   },
   nameText: {
     fontSize: 20,

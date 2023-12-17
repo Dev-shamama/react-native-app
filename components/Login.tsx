@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,18 +7,22 @@ import {
   TouchableOpacity,
   // Alert,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {useAuth} from '../context/context';
 
 const Login = ({navigation}: {navigation: any}) => {
-  const auth:any = useAuth();
+  const auth: any = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    if (auth.auth === true) {
-      navigation.navigate('Profile');
-    }
-  }, [auth.auth, navigation]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (auth.auth === true) {
+        navigation.navigate('Profile');
+      }
+    }, []),
+  );
 
   const contextLogin = () => {
     const data = {email, password};
@@ -51,12 +55,6 @@ const Login = ({navigation}: {navigation: any}) => {
         style={styles.loginBtn}
         onPress={() => navigation.navigate('Register')}>
         <Text>Not Account? Register</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.loginBtn}
-        onPress={() => navigation.navigate('Snack Todo 🐍')}>
-        <Text>Go Home</Text>
       </TouchableOpacity>
     </View>
   );

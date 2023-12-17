@@ -7,9 +7,9 @@ const AuthContext = createContext({});
 // Create a provider component
 const AuthProvider = ({children}: {children: any}) => {
   const [auth, setAuth] = useState(false);
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState('');
   const [tasks, setTasks] = useState<any>([]);
-
 
   // GET DATA
   const getData = async () => {
@@ -83,6 +83,9 @@ const AuthProvider = ({children}: {children: any}) => {
       const data = await response.json();
       await AsyncStorage.setItem('data', JSON.stringify(data.data[0].data));
       await getData();
+      Alert.alert('Success', 'Data fetch on cloud', [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
       console.log('sync data: ', data.data[0].data);
     } catch (e: any) {
       console.log('Custom Error:', e.message);
@@ -107,6 +110,9 @@ const AuthProvider = ({children}: {children: any}) => {
           },
         );
         const data = await response.json();
+        Alert.alert('Success', data.message, [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
         console.log('save data: ', data);
       } catch (e: any) {
         console.log('Custom Error:', e.message);
@@ -114,11 +120,44 @@ const AuthProvider = ({children}: {children: any}) => {
     }
   };
 
-
+  const profile = async () => {
+    try {
+      const response = await fetch(
+        'https://react-native-back-delta.vercel.app/api/v1/me',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: token,
+          },
+        },
+      );
+      const responseData = await response.json();
+      console.log('ProfileDetail', responseData);
+      setUser(responseData.data);
+    } catch (e: any) {
+      console.log('Custom Error:', e.message);
+      Alert.alert('Error', e.message, [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
+    }
+  };
 
   // Provide the state and update function to the components
   return (
-    <AuthContext.Provider value={{auth, setAuth, LoginHandle, token, dataSync, saveData, getData, tasks, setTasks}}>
+    <AuthContext.Provider
+      value={{
+        auth,
+        setAuth,
+        LoginHandle,
+        token,
+        dataSync,
+        saveData,
+        getData,
+        tasks,
+        setTasks,
+        user,
+        profile,
+      }}>
       {children}
     </AuthContext.Provider>
   );
